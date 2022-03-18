@@ -1,4 +1,5 @@
-from typing import Callable, Generic, Iterable, Optional, TypeVar
+from collections import deque
+from typing import Callable, Deque, Generic, Iterable, Optional, TypeVar
 
 T = TypeVar("T")
 
@@ -7,11 +8,11 @@ class Graph(Generic[T]):
         self.nodes = nodes
         self.explorer = explorer
 
-    def reachable_nodes_from(self, node: T, validator: Callable[[T, Optional[T]], bool]):
+    def reachable_nodes_from(self, nodes: Iterable[T], validator: Callable[[T, Optional[T]], bool]):
         explored: set[T] = set()
-        to_explore: list[tuple[T, Optional[T]]] = [(node, None)]
+        to_explore: Deque[tuple[T, Optional[T]]] = deque((n, None) for n in nodes)
         while len(to_explore) > 0:
-            current, origin = to_explore.pop()
+            current, origin = to_explore.popleft()
             yield current
             if current not in explored:
                 explored.add(current)
